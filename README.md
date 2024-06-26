@@ -24,8 +24,12 @@ and set up with the configuration, users and grants described in the Debezium [V
 export DEBEZIUM_VERSION=2.5
 docker-compose -f docker-compose-oracle_xeinc.yaml up --build
 
+# Enable Oracle LogMiner
+cat setup-logminer-11.sh | docker exec -i --user=oracle oracle-xe bash
+
+
 # Insert test data
-cat inventory11xe.sql | docker exec -i tutorial-oracle-1 sqlplus debezium/dbz@//localhost:1521/XE
+cat inventory11xe.sql | docker exec -i oracle-xe sqlplus debezium/dbzuser@//localhost:1521/XE
 ```
 
 The Oracle connector can be used to interact with Oracle either using the Oracle LogMiner API or the Oracle XStreams API.
@@ -41,10 +45,10 @@ Then register the Debezium Oracle connector:
 curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @register-oracle-logminer.json
 
 # Create a test change record
-echo "INSERT INTO customers VALUES (1007, 'John', 'Doe', 'john.doe@example.com');" | docker exec -i tutorial-oracle-1 sqlplus debezium/dbz@//localhost:1521/XE
+echo "INSERT INTO customers VALUES (1007, 'John', 'Doe', 'john.doe@example.com');" | docker exec -i oracle-xe sqlplus debezium/dbzuser@//localhost:1521/XE
 
 # Modify other records in the database via Oracle client
-docker exec -i tutorial-oracle-1 sqlplus debezium/dbz@//localhost:1521/XE
+docker exec -i oracle-xe sqlplus debezium/dbz@//localhost:1521/XE
 
 # Shut down the cluster
 docker-compose -f docker-compose-oracle.yaml down

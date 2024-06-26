@@ -1,12 +1,13 @@
-version: '2'
 services:
   zookeeper:
+    container_name: zookeeper
     image: quay.io/debezium/zookeeper:${DEBEZIUM_VERSION}
     ports:
      - 2181:2181
      - 2888:2888
      - 3888:3888
   kafka:
+    container_name: kafka
     image: quay.io/debezium/kafka:${DEBEZIUM_VERSION}
     ports:
      - 9092:9092
@@ -17,6 +18,7 @@ services:
     depends_on:
       - oracle
   connect:
+    container_name: connect
     image: debezium/connect-with-oracle-jdbc:${DEBEZIUM_VERSION}
     build:
       context: debezium-with-oracle-jdbc
@@ -39,6 +41,7 @@ services:
      - DEBUG_SUSPEND_FLAG=n
      - JAVA_DEBUG_PORT=0.0.0.0:5005
   oracle:
+    container_name: oracle-xe
     image: gvenzl/oracle-xe:11.2.0.2-full
     environment:
       - APP_USER=debezium

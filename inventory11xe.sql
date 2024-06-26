@@ -1,8 +1,8 @@
 --drop tables
-DROP TABLE ORDERS ;
-DROP TABLE PRODUCTS_ON_HAND ;
-DROP TABLE PRODUCTS ;
-DROP TABLE CUSTOMERS ;
+--DROP TABLE ORDERS ;
+--DROP TABLE PRODUCTS_ON_HAND ;
+--DROP TABLE PRODUCTS ;
+--DROP TABLE CUSTOMERS ;
 
 
 -- Create and populate our products using a single insert with many rows
