@@ -8,7 +8,11 @@ services:
      - 3888:3888
   kafka:
     container_name: kafka
-    image: quay.io/debezium/kafka:${DEBEZIUM_VERSION}
+    image: quay.io/debezium/kafka:${DEBEZIUM_VERSION}    
+    build:
+      context: kafka
+      args:
+        DEBEZIUM_VERSION: ${DEBEZIUM_VERSION}    
     ports:
      - 9092:9092
     links:

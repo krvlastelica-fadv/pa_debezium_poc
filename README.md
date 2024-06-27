@@ -12,6 +12,22 @@ Files in this repository are based on the files and info provided in:
 https://github.com/debezium/debezium-examples.git
 https://github.com/debezium/oracle-vagrant-box
 https://github.com/royalihasan/dockerized-setup-kafka-connect-oracle-debezium-stack/tree/master
+https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-kafka-mirror-maker-tutorial
+
+
+This image shows comparison between Log and Query based synchronization approach:
+![image info](./images/debezium_vs_sp.png)
+
+
+Arhitecture of this POC solution (log based) is shown below:
+![image info](./images/debezium_ea_pa_.png)
+
+## Azure
+
+Go to Azure portal and create:
+1) Events Hub Namespase :  padebezium
+2) Event Hub :  padebezium/server1.debezium.customers
+
 
 ## Using Oracle
 
@@ -25,12 +41,19 @@ export DEBEZIUM_VERSION=2.5
 docker-compose -f docker-compose-oracle_xeinc.yaml up --build
 
 # Enable Oracle LogMiner
-cat setup-logminer-11.sh | docker exec -i --user=oracle oracle-xe bash
+cat ./oracle/setup-logminer-11.sh | docker exec -i --user=oracle oracle-xe bash
 
 
 # Insert test data
-cat inventory11xe.sql | docker exec -i oracle-xe sqlplus debezium/dbzuser@//localhost:1521/XE
+cat ./oracle/inventory11xe.sql | docker exec -i oracle-xe sqlplus debezium/dbzuser@//localhost:1521/XE
+
+# Start Kafka MirrorMaker to send messages to Azure Events Hub
+docker exec -i kafka bin/kafka-mirror-maker.sh --consumer.config config/source-mirror.config --num.streams 1 --producer.config config/mirror-eventhub.config --whitelist="server1.DEBEZIUM.CUSTOMERS"
+
+
 ```
+
+
 
 The Oracle connector can be used to interact with Oracle either using the Oracle LogMiner API or the Oracle XStreams API.
 
@@ -56,3 +79,6 @@ docker-compose -f docker-compose-oracle.yaml down
 
 To check the Kafka topics and the messages, go to:
 http://localhost:8080
+
+
+ 

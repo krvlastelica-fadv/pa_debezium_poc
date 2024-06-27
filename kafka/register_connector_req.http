@@ -27,7 +27,7 @@ Content-Type: application/json
 }
 
 ###
-DELETE  http://localhost:8083/connectors/inventory-connector-6
+DELETE  http://localhost:8083/connectors/inventory-connector-7
 
 ###
 POST http://localhost:8083/connectors/
