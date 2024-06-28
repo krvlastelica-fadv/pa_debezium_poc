@@ -4,6 +4,7 @@ Aim of this POC is to setup local enviroment with:
     debezium connector
     zookeeper
     kafka
+    kafka mirrormaker
     oracle
     logMiner
 Changes in the OracleXE Debezium.CUSTOMERS table should be push to Kafka topic.
@@ -28,12 +29,15 @@ Go to Azure portal and create:
 1) Events Hub Namespase :  padebezium
 2) Event Hub :  padebezium/server1.debezium.customers
 
+In Azure padebezium namespace under Shared access policies find **Connection string–primary key**
+and paste it in **kafka-mirror/mirror-eventhub.config**
+
+
 
 ## Using Oracle
 
 This assumes Oracle is running on localhost
-(or is reachable there, e.g. by means of running it within a VM or Docker container with appropriate port configurations)
-and set up with the configuration, users and grants described in the Debezium [Vagrant set-up](https://github.com/debezium/oracle-vagrant-box).
+(or is reachable there, e.g. by means of running it within a VM or Docker container with appropriate port configurations).
 
 ```shell
 # Start the topology as defined in https://debezium.io/documentation/reference/stable/tutorial.html
@@ -49,10 +53,7 @@ cat ./oracle/inventory11xe.sql | docker exec -i oracle-xe sqlplus debezium/dbzus
 
 # Start Kafka MirrorMaker to send messages to Azure Events Hub
 docker exec -i kafka bin/kafka-mirror-maker.sh --consumer.config config/source-mirror.config --num.streams 1 --producer.config config/mirror-eventhub.config --whitelist="server1.DEBEZIUM.CUSTOMERS"
-
-
 ```
-
 
 
 The Oracle connector can be used to interact with Oracle either using the Oracle LogMiner API or the Oracle XStreams API.
@@ -79,6 +80,14 @@ docker-compose -f docker-compose-oracle.yaml down
 
 To check the Kafka topics and the messages, go to:
 http://localhost:8080
+
+
+### Production enviroment
+
+There are few possible upgrades when considering moving to production:
+1) replace Kafka MirrorMaker 1 with MirrorMaker 2 separate instance
+2) LB for Kafka/Zookeper
+3) replace message format from JSON to AVRO
 
 
  
