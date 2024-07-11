@@ -28,6 +28,7 @@ Arhitecture of this POC solution (log based) is shown below:
 Go to Azure portal and create:
 1) Events Hub Namespase :  padebezium
 2) Event Hub :  padebezium/server1.debezium.customers
+3) copy event hub SharedAccessKey  to mirror-eventhub.config
 
 In Azure padebezium namespace under Shared access policies find **Connection string–primary key**
 and paste it in **kafka-mirror/mirror-eventhub.config**
@@ -42,7 +43,7 @@ This assumes Oracle is running on localhost
 ```shell
 # Start the topology as defined in https://debezium.io/documentation/reference/stable/tutorial.html
 export DEBEZIUM_VERSION=2.5
-docker-compose -f docker-compose-oracle_xeinc.yaml up --build
+docker compose -f docker-compose-oracle_xeinc.yaml up --build
 
 # Enable Oracle LogMiner
 cat ./oracle/setup-logminer-11.sh | docker exec -i --user=oracle oracle-xe bash
